@@ -1,14 +1,27 @@
-const express = require("express");
+const express = require('express');
+const path = require('path');
+
 const app = express();
-const port = 3000;
+
+// Middleware to parse JSON
 app.use(express.json());
-app.get("/", (req, res) => {
-    res.send("Hello, API is working!");
+
+// Serve static frontend files
+app.use(express.static(path.join(__dirname, 'frontend')));
+
+// Serve the frontend's index.html for all GET requests
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'frontend', 'index.html'));
 });
-app.post("/data", (req, res) => {
-    const { name } = req.body;
-    res.json({ message: `Received data: ${name}` });
+
+// API endpoint to handle form submission
+app.post('/api/data', (req, res) => {
+    const { data } = req.body;
+    res.json({ message: `Received: ${data}` });
 });
-app.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}`);
+
+// Start the server
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
 });
